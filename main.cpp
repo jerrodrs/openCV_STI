@@ -22,6 +22,9 @@ int main(int argc, char* argv[])
     int frameHeight = vc.get(CV_CAP_PROP_FRAME_HEIGHT );
     int frameWidth = vc.get(CV_CAP_PROP_FRAME_WIDTH );
 
+    //render out image
+    Mat renderImage;
+
     //current frame from video
     Mat image;
 
@@ -53,34 +56,44 @@ int main(int argc, char* argv[])
         vc.read(image);
 
         // Stop if there are no more frames in the video
-        if (image.empty()) break;
-
-        if(currentColumn <= frameCount){
-	        // Transfer center column to new image
-	        for (int row = 0; row < image.size().height; row++) {
-	            Vec3b bgrPixel = image.at<Vec3b>(row, centerColumn);
-	            STI_image_cols.at<Vec3b>(row, currentColumn) = bgrPixel;
-	        }
-	        // Transfer center row to new image
-	        for (int col = 0; col < image.size().width; col++) {
-	            Vec3b bgrPixel = image.at<Vec3b>(centerRow, col);
-	            STI_image_rows.at<Vec3b>(col, currentColumn) = bgrPixel;
-	        }
-	    }
-
-	    currentColumn++;
+        //if (image.empty()) break;
 	    
+	    if(!image.empty()){
 
-        // Display the image 
-        imshow("PLAYER", image);
-        imshow("STI_COL_DISPLAY", STI_image_cols);
-        imshow("STI_ROW_DISPLAY", STI_image_rows);
+	        if(currentColumn <= frameCount){
+		        // Transfer center column to new image
+		        for (int row = 0; row < image.size().height; row++) {
+		            Vec3b bgrPixel = image.at<Vec3b>(row, centerColumn);
+		            STI_image_cols.at<Vec3b>(row, currentColumn) = bgrPixel;
+		        }
+		        // Transfer center row to new image
+		        for (int col = 0; col < image.size().width; col++) {
+		            Vec3b bgrPixel = image.at<Vec3b>(centerRow, col);
+		            STI_image_rows.at<Vec3b>(col, currentColumn) = bgrPixel;
+		        }
+		    }
+
+		    currentColumn++;
+
+	        // Display the image 
+	        imshow("PLAYER", image);
+	        imshow("STI_COL_DISPLAY", STI_image_cols);
+	        imshow("STI_ROW_DISPLAY", STI_image_rows);
+	    }
 
         // Sleep for 30 milliseconds. Note: This function is the only method in 
         // HighGUI that can fetch and handle events,  so it needs to be called 
         // periodically for normal event processing unless HighGUI is used within 
         // an environment that takes care of event processing.
         int c = waitKey(30);
+
+        if(c == 32){
+            vc.set(CV_CAP_PROP_POS_AVI_RATIO, 0);
+            STI_image_cols = Mat(frameHeight, frameCount, CV_8UC3, Scalar::all(0));
+            STI_image_rows = Mat(frameWidth, frameCount, CV_8UC3, Scalar::all(0));
+            currentColumn = 0;
+            continue;
+        }
 
         // Quit if any key is pressed
         if (c != -1) break;
