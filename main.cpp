@@ -17,7 +17,7 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
     */
-    VideoCapture vc = VideoCapture("small_test.mp4");
+    VideoCapture vc = VideoCapture("samples/small_test.mp4");
     int frameCount = vc.get(CV_CAP_PROP_FRAME_COUNT);
     int frameHeight = vc.get(CV_CAP_PROP_FRAME_HEIGHT );
     int frameWidth = vc.get(CV_CAP_PROP_FRAME_WIDTH );
@@ -36,9 +36,11 @@ int main(int argc, char* argv[])
     namedWindow("STI_COL_DISPLAY", WINDOW_NORMAL);
     namedWindow("STI_ROW_DISPLAY", WINDOW_NORMAL);
 
-    moveWindow("PLAYER", 50, 50);
-    moveWindow("STI_COL_DISPLAY", 50+frameWidth, 50);
-    moveWindow("STI_ROW_DISPLAY", 50+frameWidth+frameWidth, 50);
+    int offset = 100;
+
+    moveWindow("PLAYER", offset, offset);
+    moveWindow("STI_COL_DISPLAY", offset+frameWidth, offset);
+    moveWindow("STI_ROW_DISPLAY", offset+frameWidth+frameWidth, offset);
 
     int centerColumn = frameWidth/2;
     int centerRow = frameHeight/2;
